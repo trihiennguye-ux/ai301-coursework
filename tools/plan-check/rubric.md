@@ -1,0 +1,22 @@
+# Rubric: is this plan ready to post and build from?
+
+## Checks
+
+| Check | Evidence | Pass condition | Weight |
+|---|---|---|---|
+| Cause follows the evidence | The plan's stated cause (Diagnosis and grounding family in `references/evidence-guide.md`) read against every step, artifact, and control run in the repro-evidence block | The plan states a cause, and that cause is consistent with every step and control the repro evidence shows. Fail if any control run or artifact rules the stated cause out (the blamed component is shown working, or the symptom is shown appearing with the blamed component out of the loop), or if the plan states no cause at all. A cause borrowed from a thread comment gets no credit for its source: it is checked against the repro evidence like any other, and the repro evidence wins. A cause that is an inference the evidence allows but does not prove still passes | required |
+| One bounded change | The plan's scope statement, in/not-in-scope lines, and list of changes (Scope family) read against what the issue body asks for | Every change the plan lists is needed to fix the behavior the issue reports, or is the test or doc for that same fix. Fail if the plan adds work the issue never asked for: a refactor or rewrite of the surrounding module, a migration, a new option or setting, a port to sibling components, a CI or test-harness overhaul. A plan that fixes a narrower case than the issue and names what it defers still passes; deferring is bounding, not creep | required |
+| A stranger could start | The plan's change/approach/files lines (Executability family) | The plan names where the change goes (a file, function, or call site) and commits to one approach. Fail if the location is "somewhere" or absent, if the choice between approaches is left for build time ("whichever is easier", "not sure which layer"), or if the plan is to investigate rather than to change something. A named, bounded verification step still to do (e.g. "will confirm the remaining three tools accept `--`") does not fail this | required |
+| Test names an observable | The plan's test plan (Test plan family) read against the repro evidence's steps and expected/actual lines | The test plan names at least one specific command or action AND the specific result that shows this fix worked (output, exit code, visible state), tied to the reproduced behavior. Fail if the only test is a generic suite run ("run the tests, nothing regresses"), a feeling ("should feel fast", "nothing else should feel broken"), or a restatement of the goal ("undo works") | required |
+| Engages maintainer direction | The plan comment and plan read against thread highlights authored by OWNER, MEMBER, COLLABORATOR, or CONTRIBUTOR (Comms family) | If a maintainer in the thread has pointed at a culprit, chosen or proposed a fix direction, rejected an approach, or asked for something, the plan either follows that direction or the comment says explicitly why it does not. Fail if the plan goes a different way and the comment never mentions the maintainer's direction, or if the plan does what a maintainer rejected. Passes when the thread has no maintainer direction. Comments from non-maintainers (NONE) are not direction | required |
+| AI-policy compliance | The repo-facts contribution-policy line read against the plan comment text (Comms family); every package is treated as AI-assisted work | An outright ban on AI-assisted contributions fails. A policy that requires disclosing AI use in general ("all AI usage must be disclosed") passes only if the comment discloses it in the poster's own words. A policy that only asks for disclosure in the pull request, only asks for understanding/responsibility/human-written comments, or states no AI policy, passes without a disclosure in the comment | required |
+| Unknowns stated as unknowns | The plan's risk/open-question lines and the comment's certainty language (Honesty family) | Things the author has not verified are labeled as unverified, and the comment makes no promise (timeline, "guaranteed fix") the package gives no backing for | preferred |
+
+## Verdict rule
+
+Accept only if every `required` check passes. Any `required` check that
+fails, or comes back `unclear`, rejects the package: `unclear` is treated
+the same as fail, since a plan I cannot verify from the package is not a
+plan someone else can build from. The `preferred` check never changes the
+verdict; its grade is reported so the author can tighten the wording
+before posting.
