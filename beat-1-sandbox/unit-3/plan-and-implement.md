@@ -98,28 +98,37 @@ fields.
 
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. Run 1 (2026-10-02T18:43:26Z, graded from `~/.claude/skills/plan-check`, the committed `eval-run.txt`): `agreement: 20/20 scored items  (bar: 18/20: PASS)`.
+
+That is the only run. The category line reads `categories: clear-accept 7/7  scope-creep 4/4  thread-convention 2/2  unbuildable 3/3  wrong-cause 4/4`, so the category floor holds too. The fingerprints in the header (`rubric.md  sha256:0e8ad8edbd8bfecd`, `evidence-guide.md  sha256:ab6a99a025d3dbf8`, `procedure.md  sha256:20cff6aa8bbc28dc`, `SKILL.md  sha256:4688d0d0f4cf6cb3`) match the files now in `tools/plan-check/`, so the run graded the same components I uploaded.
 
 **Package analysis**
 
-[Pick one scored package (`pkg-01` through `pkg-20` — the four `calib-` packages are never
-scored). Name it by id, say what your rubric decided and what the gold label said, and
-explain why your rubric read it that way.]
+**pkg-20** (ghostty-org/ghostty#11261). My rubric decided **reject**, and the gold label is **reject**: `pkg-20  thread-convention  reject  reject   yes`.
+
+I picked it because it is the package where every plan-quality check has nothing to object to, so the verdict rests on one check. The plan follows the maintainer's direction in the thread ("proposes instead recomputing `prev` only if the underlying page capacity changed during an operation"), stays bounded ("Not in scope: recomputing `prev` unconditionally (the approach the thread already rejected as too expensive), or any wider refactor of page memory management"), names its site (`Terminal.print`), and has an observable test ("`zig build test` with both fuzz-derived cases passing and the control unchanged").
+
+What my rubric reads against it is the repo-facts policy line:
+
+> contribution policy (CONTRIBUTING.md + AI_POLICY.md): strict AI rules. All AI usage in any form must be disclosed, stating the tool used and the extent of the assistance
+
+The plan comment runs from "I reproduced both fuzz cases on current main" to "pending the print benchmark" and never mentions AI use. My AI-policy compliance check says a policy that requires disclosing AI use in general "passes only if the comment discloses it in the poster's own words", and that "every package is treated as AI-assisted work", so the package is held. The verdict rule does the rest: "Any `required` check that fails, or comes back `unclear`, rejects the package." The gold note agrees with that reading: "excellent bounded plan that follows the thread's direction, but the comment contains no AI-use disclosure and ghostty's stated policy requires disclosing all AI usage".
 
 **Check rationale**
 
-[Quote one check from the `rubric.md` you uploaded to `tools/plan-check/`, exactly as it reads now.
-Then say why it reads that way — what you revised to get there, or what you rejected in
-favour of it.]
+> | AI-policy compliance | The repo-facts contribution-policy line read against the plan comment text (Comms family); every package is treated as AI-assisted work | An outright ban on AI-assisted contributions fails. A policy that requires disclosing AI use in general ("all AI usage must be disclosed") passes only if the comment discloses it in the poster's own words. A policy that only asks for disclosure in the pull request, only asks for understanding/responsibility/human-written comments, or states no AI policy, passes without a disclosure in the comment | required |
+
+It has three tiers because the policy lines in the packages come in three kinds, and only one of them asks anything of a plan comment. The version I rejected was the simpler one: "if the repo states any AI policy, the comment must disclose." That would have been easier for a grader to apply, but it reads conditions as disclosure requirements when they aren't. pkg-05's policy is "generative AI tools welcome; you are responsible for all contributions and must review and understand AI-generated content before including it in a pull request", and pkg-09's says contributors "must state the tool and the extent of its use in the pull request" and then "the policy states no disclosure ask for issue comments". Neither comment discloses anything, and both are gold accepts. So the last sentence of the pass condition names those cases out loud (PR-only disclosure, understanding/responsibility, human-written comments, no policy) so the grader doesn't have to decide on its own whether a condition counts as a disclosure requirement.
+
+I also kept "every package is treated as AI-assisted work" in the evidence column. Without it the check has no way to fail pkg-20, since nothing in the comment says AI was used.
 
 **Trade-offs**
 
-[Every check gives something up. Any one of these is a complete answer: a package whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+The packages this wording changes, compared with the simpler "any AI policy means disclose" version, are pkg-05 and pkg-09: both would flip from accept to reject, and `clear-accept` would drop from `7/7` to `5/7`. With the three-tier wording they agree with gold, and pkg-20 still rejects, so `thread-convention` stays `2/2`.
+
+What I give up is the comment itself on PR-only policies. pkg-09's policy also says "comments to maintainers are expected to be in the contributor's own words and voice", and my check passes that tier "without a disclosure in the comment" without testing whether the comment is in the poster's own voice. A templated, AI-sounding comment on a repo like that would get through this check. I accept that miss in eval mode because voice can't be graded from a bundle; in live mode my `voice-guide.md` rule "Disclose AI use the way the repo asks" is what covers it, and that only reports, it doesn't change the verdict.
+
+I did not re-run a canary with `--only`, because the single full run already covers both small categories and the rubric hasn't changed since (same `rubric.md` hash as the committed run).
 
 ---
 
