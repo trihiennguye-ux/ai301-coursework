@@ -55,10 +55,9 @@ happened; these entries are the toolkit's own timeline.
 All four entries are graded. Keep every heading below, and fill each
 one in the week it belongs to.
 
-**Unit 5: [one line on the tool work]**
+**Unit 5: built issue-scout's search strategy and ran a first wild scan plus three direct-URL runs**
 
-[2-4 sentences: what you built (the scout, your strategy), what broke
-or fell short, what changed because of it.]
+I wrote three `gh search issues` queries traced to my fit profile (Python, JavaScript, and test-titled issues) with a fewest-comments-then-newest ordering, ran a scan that turned 300 results into 5 graded candidates, and graded six hand-picked issues directly (MaterialX, pythondotorg, OpenImageIO). The scan exposed four problems: my rubric still applied the sandbox's "claims don't count" house rule, an assignee filter repeated the queries and dropped nothing, the ordering floated brand-new issues on 0–4-star repos to the top, and the scope check rejects a whole umbrella issue like OIIO #4387 even when a maintainer offers each sub-item as standalone work. I rewrote the "Nobody already on it" check so a recent unreleased claim fails, removed the redundant filter, and logged the ordering gap in `scan-notes.md` and the umbrella gap in `scan-output.md`. I didn't change the ordering, because re-ranking offline didn't fix it and search results carry no star counts.
 
 **Unit 6: [one line on the tool work]**
 
