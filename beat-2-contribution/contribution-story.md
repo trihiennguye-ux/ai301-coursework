@@ -1,4 +1,4 @@
-# Contribution: [Issue Title]
+# Contribution: [Frontend Design] Design Landing Page UI/UX for CampusOS
 
 Path: `beat-2-contribution/contribution-story.md`
 
@@ -8,10 +8,9 @@ format criteria grade exactly that. Your course repo link is the whole submissio
 files and no evidence uploads are part of Assignment 5.
 
 **Contribution Number:** [1]
-**Student:** [Student name]
-**GitHub Username:** [your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comments upstream are identified by this name.]
-**Issue:** [GitHub issue link]
+**Student:** Victor Nguyen
+**GitHub Username:** trihiennguye-ux
+**Issue:** https://github.com/NITRR-Official/CampusOS/issues/60
 **Pull Request:** [GitHub PR link, once opened]
 
 One repository, built across units 5 to 8, telling the whole story of your real
@@ -79,24 +78,18 @@ drafted, what you did with the draft.]
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs in your own words: how you searched, what your scan
-surfaced, what your scout's verdict said, why this issue fits your
-profile, and what you hope to learn. If your scout's verdict on it
-was reject and you chose it anyway, say so here and say why; choosing
-against your own tool silently is what loses points. Close with an
-honest read of the tool itself: where the scout fell short on a real
-wild search and what you changed or would change, or what convinced
-you it held up. **Record the link to your claim comment in this section too.**
-Not claimed yet? Write `claim pending` and today's date where the link goes,
-and add the link the moment your claim lands.]
+This week I didn't run a new scan. I picked issues by hand and graded each one with issue-scout in direct mode: OpenImageIO #4720, CTSM #3152, agentic-operator-core #133, CTSM #1390, and CampusOS #60. Three of them dropped out for different reasons. #133 was a seven-item umbrella issue, and my rubric rejected it. On CTSM #3152, a maintainer had closed an AI-written PR for that exact issue six days earlier, saying they don't want AI-written text in their docs. CTSM #1390 was a clean, well-scoped fix, but it's in Fortran and the PR template asks you to build and run the climate model. I chose CampusOS #60, "Design Landing Page UI/UX". The scout accepted it: every required check passed, and the only preferred check it failed was adoption (5 stars). The difficulty note said ambitious, because the design is wide open ("The exact structure may evolve"), every acceptance item is a judgment only the owner can sign off on, and two PRs (#63, #87) have already built a placeholder and the hero section.
+
+The scout also flagged that #60 is a poor fit for my profile, since it asks for design, not code, and I chose it anyway. The repo itself is a React/TypeScript frontend, which is the JavaScript/React side of what I know. My first step is reading `frontend/app/page.tsx` and `docs/frontend/DESIGN_SYSTEM.md`, which is exactly the "reading an unfamiliar codebase" practice I want. I also want to learn how to work an open-ended issue with a maintainer: asking what is still needed and agreeing on a deliverable before building anything. My honest read of the scout is that it graded the rules correctly but missed a few things a person would notice. "Maintainer alive" passed partly on the owner replying to their own issues. The repo is about a week from failing the 90-day activity checks. And scope-feasible has no way to ask whether a design-only issue has a "done" a reviewer can check. I logged all three in `scan-notes.md`. Before posting, repro-check accepted my claim draft, but my voice guard caught a report-back date I couldn't back up, so I replaced it with a promise to post an outline for review before any mockups.
+
+Claim comment: https://github.com/NITRR-Official/CampusOS/issues/60#issuecomment-6461284783
 
 **Toolkit**
 
-- Tool: issue-scout (your scout: your search strategy, your rubric),
-  and how you used it
-- What it produced: [the scan and its verdict on this issue, described]
-- Difficulties: [where it fell short, or "none met" if none did]
-- What changed: [what you patched or would update, or "nothing"]
+- Tool: issue-scout in direct mode. I gave it five hand-picked issue URLs one at a time, and it graded each against my rubric with live `gh` evidence. I also used repro-check on my claim draft.
+- What it produced: for #60, an accept with every required check passing, a failed "Adoption scale" (5 stars), and a difficulty note of **ambitious** naming the open edge: which sections are still needed after #63/#87, and in what format. It also produced read-outs for the other four issues in `scan-output.md`.
+- Difficulties: the scout can't tell design work from code work. It passed a design-only issue whose acceptance criteria no reviewer can check, and it counted the owner's replies on their own issues as maintainer responses. My AI-policy check only reads policy files, so on CTSM #3152 it passed even though a maintainer had refused AI-written docs on a PR. The attempt-history check missed an unlinked PR that I only found with a PR search.
+- What changed: I applied this week's scope patch. My unit-1 "Scope fits a newcomer" check rejected any issue whose design was unsettled, so I replaced it with the `scope-feasible` floor, which only rejects issues that aren't one piece of work, and added a difficulty note (straightforward / moderate / ambitious) under the checks table. Under the old check, #60 would likely have been rejected, since its structure "may evolve". I logged further fixes to make in `scan-notes.md`: require maintainer replies on other people's issues, read maintainers' AI statements on PRs, add a PR search to attempt history, and pass a sub-item the issue sizes as standalone work.
 
 ---
 
