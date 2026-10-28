@@ -58,11 +58,9 @@ one in the week it belongs to.
 
 I wrote three `gh search issues` queries traced to my fit profile (Python, JavaScript, and test-titled issues) with a fewest-comments-then-newest ordering, ran a scan that turned 300 results into 5 graded candidates, and graded six hand-picked issues directly (MaterialX, pythondotorg, OpenImageIO). The scan exposed four problems: my rubric still applied the sandbox's "claims don't count" house rule, an assignee filter repeated the queries and dropped nothing, the ordering floated brand-new issues on 0–4-star repos to the top, and the scope check rejects a whole umbrella issue like OIIO #4387 even when a maintainer offers each sub-item as standalone work. I rewrote the "Nobody already on it" check so a recent unreleased claim fails, removed the redundant filter, and logged the ordering gap in `scan-notes.md` and the umbrella gap in `scan-output.md`. I didn't change the ordering, because re-ranking offline didn't fix it and search results carry no star counts.
 
-**Unit 6: [one line on the tool work]**
+**Unit 6: installed a voice guard on `gh issue comment` and filled a repo-memory file in my CampusOS clone**
 
-[2-4 sentences: the voice-guard, the repo-memory file. What broke or
-fell short, and what changed because of it. "Nothing broke" counts when
-it is true - say how you know.]
+I installed the voice guard as a PreToolUse hook that checks every `gh issue comment` against my voice guide, and its log shows it stopping my first claim post over a report-back date ("by Wednesday, November 4") that broke my rule against timelines I can't back up, then passing the revised comment. That stop showed a gap, since repro-check had accepted the same draft because its rubric only looks for fix timelines, so I changed the line to a promise to post my outline for review before any mockups. I filled `CLAUDE.local.md` in my clone (excluded through `.git/info/exclude`, so `git status` stays clean) with 35 lines covering CONTRIBUTING.md's PR conventions, where the landing page lives, the build and test commands, and the repo's AI stance (none stated). Writing it showed that `frontend/app/page.tsx` is already a full landing page, not the placeholder my claim comment called it, and that I can't run any of the commands yet because `pnpm` isn't installed, so my outline will start from the existing page and name what's missing.
 
 **Unit 7: [one line on the tool work]**
 
