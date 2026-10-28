@@ -122,31 +122,44 @@ Claim comment: https://github.com/NITRR-Official/CampusOS/issues/60#issuecomment
 
 **Environment Setup**
 
-[What a stranger would need to stand this up: your operating system,
-the relevant versions (language, runtime, package manager, the project
-itself), and how you set the project up. Then the challenges you faced
-and how you solved them, or that none came up.]
+macOS (Darwin 27.0.0), git 2.54.0, node v24.11.1. I forked NITRR-Official/CampusOS to trihiennguye-ux/CampusOS and cloned the fork. Branch `dev` is at `4263489` ("fix: add header and hero component and auth states for buttons #86 (#87)", 2026-08-05), which matched upstream `dev` on 2026-10-28, with a clean working tree. #60 is a design request, not a bug, so reproducing it means showing that the gap it describes is still real in today's code. All of my checks are static checks on the source. The challenge I haven't solved yet: `pnpm` isn't installed, so I haven't run `pnpm install` or `pnpm dev` and haven't viewed the rendered page at `/`. Viewing the page, including how it responds to screen width and dark mode, is still to do.
 
 **Steps to Reproduce**
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+From a clean clone at `dev` `4263489`:
+
+1. List the landing page's sections and headings: `grep -nE "<section|<footer|<h1|<h2" frontend/app/page.tsx`
+2. Search the page and its two components for the themes the issue asks for: `grep -niE "open.?source|community|contribut|github|calendar|plugin" frontend/app/page.tsx frontend/components/LandingHeader.tsx frontend/components/LandingHeroActions.tsx`
+3. Look for a landing page design doc: `ls docs/frontend` and `grep -rliE "landing" docs/`
+4. Check the hero's stat tiles: `grep -nE "value: '" frontend/app/page.tsx`
+5. Observed result: the page already has a hero, four sections (`#features`, `#modules`, `#workflow`, `#launch`), and a footer, but there's no written design in the repo, and there are no open-source/community or contributor sections.
 
 **Reproduction Evidence**
 
-- **Commit showing reproduction:** [link to commit in your fork]
-- **Screenshots/logs:** [if applicable]
-- **My findings:** [what you discovered during reproduction; an
-  honest, evidenced cannot-reproduce that led you to re-pick or ask
-  the maintainer belongs here and costs you nothing]
+- **Commit showing reproduction:** none
+- **Screenshots/logs:** output excerpts from steps 2 and 4:
+
+  ```
+  frontend/app/page.tsx:3:  Calendar,
+  frontend/app/page.tsx:47:    title: 'Events and calendars',
+  frontend/app/page.tsx:49:    icon: Calendar
+  frontend/app/page.tsx:364:          <p>CampusOS - Campus management and community operations.</p>
+
+  119:                { label: 'Active modules', value: '12+' },
+  120:                { label: 'Teams onboarded', value: '40+' },
+  121:                { label: 'Automations', value: '120+' },
+  122:                { label: 'Uptime', value: '99.9%' }
+  ```
+
+  Step 3 found only `DARK_MODE.md`, `DESIGN_SYSTEM.md`, and `OVERVIEW.md` in `docs/frontend`. The only "landing" mentions are file-tree and route-table lines in `OVERVIEW.md` and `docs/project/PROJECT_STRUCTURE.md`.
+- **My findings:** The gap #60 describes is partly real today. A landing page exists in code, more complete than "placeholder" (#63's title) suggests, but none of the issue's design deliverables (section hierarchy, design decisions) exist in the repo. Two of its goals have no section at all: open-source/community and contributor onboarding. Two are only partly covered: the Modules section never mentions the plugin architecture, and the calendar showcase is one module card. The hero's stats are hard-coded marketing numbers. Whether the owner still wants a full design or only the missing sections is the question in my claim comment, which is still unanswered.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: repro-check, in live mode. I ran it on my claim draft before posting, then on the claim plus `repro-draft.md` together, both against my rubric and voice guide.
+- What it produced: an accept on the claim-only draft (the three repro checks marked not yet applicable), then an accept on the full package with all six required checks passing.
+- Difficulties: my rubric is written for bugs ("trigger", "symptom", "crash"), and #60 is a design request with nothing to trigger. "Behavior matches the issue" passed by reading the issue's acceptance criteria as the symptom, but nothing in the rubric says that's allowed. It also accepted my claim draft with a report-back date that my voice guard then stopped, because "Claims match evidence" only looks for fix timelines. Before grading, I narrowed one sentence myself that claimed more than my grep showed: I had said there was no plugin-architecture section when the page does have a Modules section.
+- What changed: I replaced the date in my claim with a promise to post my outline before any mockups. I'd add a row to the rubric for feature and design issues ("the report shows the requested capability or artifact is absent today") and make the timeline check match my voice guide's rule, which covers any timeline I can't back up, not just fix timelines.
 
 ---
 
