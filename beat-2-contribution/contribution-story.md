@@ -230,39 +230,49 @@ Deviations:
 
 ## Testing Strategy
 
-[What observable checks prove the fix: your reproduction steps re-run
-against the built change (before and after), and the repo's own test
-suite or checks with the outcome shown. "Tests pass" with nothing
-observable named is not a strategy.]
+#60 is design only, so there's no failing test to make pass. The fix is right if three observable things hold: the spec exists where the repro showed nothing, it covers every acceptance criterion and proposed section, and the page itself didn't change. I re-ran my reproduction on `dev` (4263489) and on `feature/60-landing-page-design` (9110cc1), and saved both runs in `test_evidence.md` in my clone.
+
+| Check | Before (`dev`) | After (branch) |
+| --- | --- | --- |
+| `ls docs/frontend` | `DARK_MODE.md`, `DESIGN_SYSTEM.md`, `OVERVIEW.md` | the same three plus `LANDING_PAGE.md` |
+| `grep -rliE landing docs/` | `OVERVIEW.md`, `docs/project/PROJECT_STRUCTURE.md` | the same two plus `docs/frontend/LANDING_PAGE.md` |
+| `grep -nE "^#{2,3} " docs/frontend/LANDING_PAGE.md` | no file | five `##` headings, one per acceptance criterion (1. UI/UX Direction through 5. Implementation-Ready Decisions), and subsections 2.0–2.9, including 2.5 Calendar, 2.6 Open source and community, and 2.7 Contributor onboarding |
+| `git diff --name-only dev...HEAD` | n/a | only `docs/frontend/LANDING_PAGE.md` |
+| `pnpm dev`, fetch `http://[::1]:3000/` | h1 "Campus operations, finally in sync.", four h2s, ids `features modules workflow launch` | identical, so the page is untouched |
+
+The repo's own checks, run on the branch through my ship manifest: format check exit 0 ("All matched files use Prettier code style!"), `pnpm lint` exit 0 (0 errors, plus 1 warning that was already there, for an unused `Plus` in `frontend/app/(dashboard)/admin/plugins/page.tsx`, a file this PR doesn't touch), `pnpm type-check` exit 0, and `pnpm test` exit 0 (232 tests across 15 plugin packages; `frontend`, `backend`, and `shared` have none yet). I also ran `pnpm build` (exit 0), because the PR template's checklist asks for it. What none of this checks: whether the design is good. Only the owner can sign off on that, which is why the outline went to the thread first.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code in my clone. It ran the before commands on `dev` and the after commands on the branch, ran the four repo checks plus `pnpm build`, and wrote the results into `test_evidence.md`. The ship-gate re-ran the manifest checks and pr-precheck read that file as evidence.
+- What it produced: `test_evidence.md` with the before/after output above and a results table. pr-precheck's "Evidence shows the fix" check passed on it.
+- Difficulties: a design spec has nothing to execute, so my first idea of a "test" was only "the file exists". The local fetch hit the IPv4/IPv6 port clash again. And `pnpm lint` printed a warning I had to trace before I could say it wasn't mine.
+- What changed: I added the heading grep, so coverage of every acceptance criterion and proposed section can be checked, and the rendered-page comparison, so "no code changed" is shown rather than claimed. I also recorded the lint warning's file as pre-existing instead of leaving it out.
 
 ---
 
 ## Implementation Notes
 
-[A running log, added to as you work. Date each entry. What you
-built, decisions you made when you made them, wrong turns included.]
+Dates are the GitHub dates (UTC). My evening work on 2026-11-04 Eastern shows up on GitHub as 2026-11-05.
 
-**[Date]**
+**2026-10-28**
 
-[Entry]
+Claimed #60 with two questions for the owner: is a full design still wanted after #63 and #87, and in what format? My voice guard stopped the first version over a report-back date, and the second version passed. Filled `CLAUDE.local.md` in my clone. Reading `page.tsx` for it showed the page is already a full landing page, not a placeholder, so I decided the design would start from what exists. Couldn't run anything yet, because `pnpm` wasn't installed.
 
-**[Date]**
+**2026-11-04**
 
-[Entry]
+Installed `pnpm` and the dependencies, ran `pnpm dev`, and fetched `/`. Wrong turn: the first fetch returned "What are we planning?", which came from an unrelated Next.js app on IPv4 port 3000. CampusOS was on IPv6, so I switched to `http://[::1]:3000/`. The rendered page matched my static findings. Wrote Understanding the Issue and the Solution Approach, and copied it into `plan.md`. Decision: commit to a markdown spec in `docs/frontend/` even though the owner hadn't answered the format question, and treat any other answer as a deviation.
+
+**2026-11-05**
+
+Posted my reproduction on #60 (issuecomment-6646978356), then the section-hierarchy outline as its own comment (issuecomment-6647213727), with the voice guard passing it. I didn't post `plan-comment.md`, because the assignment says not to, and logged that as a deviation. Branched `feature/60-landing-page-design` instead of `docs/60-...`, because CONTRIBUTING.md asks for `feature/issue-number-description`. Wrote `docs/frontend/LANDING_PAGE.md` (402 lines) and committed it as `9110cc1` "docs(frontend): add landing page design spec (#60)". While writing it, I split "Footer/navigation" into 2.0 Header and navigation and 2.9 Footer, and gave the existing Launch CTA its own subsection (2.8), so Section hierarchy has 10 subsections, not 8. Logged that as a deviation too. Stat tiles: the spec replaces the hard-coded "12+" and "99.9%" with facts from the repo, following its principle of only claiming what exists. Wrote `ship-manifest.md`, got two manual ship-gate passes, and opened PR #135 through the hook.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code. It read `page.tsx`, `LandingHeader.tsx`, `DESIGN_SYSTEM.md`, and `DARK_MODE.md`, and drafted the outline comment and the spec. I read each section against the code and changed what didn't match. The voice guard checked the outline comment before it posted.
+- What it produced: the outline comment on #60, the 402-line spec in commit `9110cc1`, and the deviation notes in `plan.md`.
+- Difficulties: the owner never answered either question, so every scope call (keep the hero, add three sections, the stat-tile decision) was mine to make and to justify in writing. The calendar copy depends on what the `calendar`, `event`, and `scheduling` plugins actually do, and I didn't verify that.
+- What changed: I marked the new sections' copy "for example" and listed checking the calendar points against those plugins under "Left for the implementation issue", rather than presenting them as settled.
 
 ---
 
@@ -299,25 +309,31 @@ It also says what isn't in the PR (frontend code, edits to existing docs, a Figm
 
 **Technical Skills Gained**
 
-[What you learned technically, named concretely.]
+- Reading a Next.js App Router project I'd never seen: how `app/page.tsx` becomes `/`, how route groups like `(dashboard)` sit beside it, and how `proxy.ts`'s matcher decides which routes need a token (the landing page isn't one of them).
+- Tracing a page's structure to its data: the `HIGHLIGHTS`/`MODULES`/`STEPS` arrays feed the sections, and the nav's anchors are hard-coded separately, so a new section needs both changed. I wrote that into the spec's implementation decisions.
+- Working in a pnpm monorepo: a root `pnpm test` fans out to 15 plugin packages, while `type-check` and `build` run only on `frontend`, which I learned from reading `package.json` and `ci.yml` to write my manifest.
+- Debugging a port clash with `lsof -iTCP:3000 -sTCP:LISTEN`: two servers can each hold the same port, one on IPv4 and one on IPv6, and `localhost` picks one.
+- Writing a design spec someone else can build from: one section per acceptance criterion, each section's anchor and components named, and every token pointing back at `DESIGN_SYSTEM.md` instead of inventing new ones.
 
 **Challenges Overcome**
 
-[What was hard and how you solved it; point at the real events, the
-Toolkit blocks above are full of them.]
+- An issue with no "done": #60's acceptance criteria are all judgments the owner makes. I turned them into checkable things: a heading per criterion, a subsection per proposed section, and a diff that touches only the spec. Then I put the outline in front of the owner before the full spec existed.
+- No answer from the owner: neither of my claim questions got a reply. Instead of waiting indefinitely or hedging, I committed to the markdown spec, said why in the plan, and made "follow the owner's answer and log a deviation" an explicit rule.
+- Tools grading a design issue with rules built for bugs: repro-check had no row for "the requested thing is absent", and the PR monitor read a bot comment as review feedback. In both cases I went with the evidence over the label and wrote down the rubric fix.
+- My own local files breaking the repo's checks: `format:check` would have failed on notes that never go in the PR. Adding `--ignore-path .git/info/exclude` to the manifest kept the check honest without hiding anything in the diff.
 
 **What I'd Do Differently Next Time**
 
-[Reflection on your process.]
+I'd weigh the scout's "poor fit" flag and its "maintainer alive" evidence more heavily. #60 passed partly on the owner answering their own issues, the repo had been quiet since August, and in the week since my claim no human has replied. Next time I'd want a maintainer reply on someone else's issue in the last month before claiming. I'd also set up the environment on day one. Not having `pnpm` meant my first claim comment called the page a placeholder, which reading the code later proved wrong. And I'd put every CI job, including Build, in the manifest from the start, rather than running one by hand and noticing the gap afterward.
 
 ---
 
 ## Resources Used
 
-[What actually helped, not a reading list. List things this story
-already shows you using: the doc you followed to set the environment
-up, the thread that explained the bug, the person who answered you.
-One real entry beats ten plausible ones.]
-
-- [Link to documentation that helped]
-- [Discussion, issue, or post that helped]
+- [CampusOS issue #60](https://github.com/NITRR-Official/CampusOS/issues/60): the goals, proposed sections, and acceptance criteria the spec is organized around.
+- [`docs/contributing/CONTRIBUTING.md`](https://github.com/NITRR-Official/CampusOS/blob/dev/docs/contributing/CONTRIBUTING.md): branch from and target `dev`, the `feature/issue-number-description` branch name, Conventional Commits, the 3–7 day review window my playbook uses, and the setup and check commands.
+- [`.github/workflows/ci.yml`](https://github.com/NITRR-Official/CampusOS/blob/dev/.github/workflows/ci.yml): the five CI jobs my ship manifest is built from.
+- [`.github/pull_request_template.md`](https://github.com/NITRR-Official/CampusOS/blob/dev/.github/pull_request_template.md): the sections and checklists my PR description fills in.
+- [`docs/frontend/DESIGN_SYSTEM.md`](https://github.com/NITRR-Official/CampusOS/blob/dev/docs/frontend/DESIGN_SYSTEM.md) and [`docs/frontend/DARK_MODE.md`](https://github.com/NITRR-Official/CampusOS/blob/dev/docs/frontend/DARK_MODE.md): the palette, type scale, spacing, components, and dark-mode rules the spec's Design-System Direction section cites.
+- [PR #63](https://github.com/NITRR-Official/CampusOS/pull/63) and [PR #87](https://github.com/NITRR-Official/CampusOS/pull/87): the history that explained why the page existed without a design doc.
+- [`frontend/app/page.tsx` at 4263489](https://github.com/NITRR-Official/CampusOS/blob/4263489/frontend/app/page.tsx): the existing page the spec starts from.
