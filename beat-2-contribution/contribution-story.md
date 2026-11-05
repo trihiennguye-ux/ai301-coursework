@@ -11,7 +11,7 @@ files and no evidence uploads are part of Assignment 5.
 **Student:** Victor Nguyen
 **GitHub Username:** trihiennguye-ux
 **Issue:** https://github.com/NITRR-Official/CampusOS/issues/60
-**Pull Request:** [GitHub PR link, once opened]
+**Pull Request:** https://github.com/NITRR-Official/CampusOS/pull/135
 
 One repository, built across units 5 to 8, telling the whole story of your real
 contribution. Fill it as you work, not at the end — the sections below ask for evidence that
@@ -62,10 +62,9 @@ I wrote three `gh search issues` queries traced to my fit profile (Python, JavaS
 
 I installed the voice guard as a PreToolUse hook that checks every `gh issue comment` against my voice guide, and its log shows it stopping my first claim post over a report-back date ("by Wednesday, November 4") that broke my rule against timelines I can't back up, then passing the revised comment. That stop showed a gap, since repro-check had accepted the same draft because its rubric only looks for fix timelines, so I changed the line to a promise to post my outline for review before any mockups. I filled `CLAUDE.local.md` in my clone (excluded through `.git/info/exclude`, so `git status` stays clean) with 35 lines covering CONTRIBUTING.md's PR conventions, where the landing page lives, the build and test commands, and the repo's AI stance (none stated). Writing it showed that `frontend/app/page.tsx` is already a full landing page, not the placeholder my claim comment called it, and that I can't run any of the commands yet because `pnpm` isn't installed, so my outline will start from the existing page and name what's missing.
 
-**Unit 7: [one line on the tool work]**
+**Unit 7: installed the ship-gate, wrote a five-check manifest from CampusOS's CI, and shipped PR #135 through it**
 
-[2-4 sentences: the ship-gate and your gate manifest. What it produced
-on your real branch, what fought you, what changed because of it.]
+I wrote `ship-manifest.md` from `.github/workflows/ci.yml` and CONTRIBUTING.md: install, format check, lint, type-check, and test. The gate passed my branch `feature/60-landing-page-design` twice by hand, with all five checks ok and all nine pr-precheck checks passing, and the hook then let `gh pr create` through on the second pass because nothing had changed since. Two things stopped or confused me. The hook test blocked with "no PR text to check", which is expected when there's no `--title`/`--body-file`, but I only knew that because the reason says so. And the repo's own `format:check` would have failed on my untracked local notes (`CLAUDE.local.md`, `plan.md`), not on anything in the PR. So I added `--ignore-path .git/info/exclude` to the format command and wrote down why in its Source column. Looking back, I left CI's Build job out of the manifest, so I ran `pnpm build` by hand for the description, and I'd add it as a sixth check.
 
 **Unit 8: [one line on the tool work]**
 
@@ -95,26 +94,29 @@ Claim comment: https://github.com/NITRR-Official/CampusOS/issues/60#issuecomment
 
 **Problem Description**
 
-[In your own words, what is broken or missing?]
+Nothing is broken. What's missing is the design. CampusOS's landing page was built straight into code (#63's placeholder, then #87's header and hero), and nobody ever wrote down a design for it. So there's no agreed order of sections, no record of why the page looks the way it does, and two of the goals the issue lists (the open-source community and contributor onboarding) have nowhere to go.
 
 **Expected Behavior**
 
-[What should happen?]
+The issue's acceptance criteria: a finalized UI/UX direction, a defined section hierarchy, responsive behavior thought through, a design-system direction, and design decisions concrete enough that someone could build from them. All of it is design and planning. The issue says implementation and frontend code are handled separately.
 
 **Current Behavior**
 
-[What actually happens?]
+`/` renders a working page: a hero with four hard-coded stat tiles, then Platform pillars (`#features`), Modules (`#modules`), Workflow (`#workflow`), a Launch call to action (`#launch`), and a footer. The repo has no landing page design document. The rendered page has no open-source, contributor, or GitHub content. The Modules section doesn't mention the plugin architecture, and the calendar appears only as one module card.
 
 **Affected Components**
 
-[Which parts of the codebase are involved?]
+- `frontend/app/page.tsx`: the page, with its content in the `HIGHLIGHTS`, `MODULES`, and `STEPS` arrays and the stat tiles inline at lines 119–122. I'll read it but not change it.
+- `frontend/components/LandingHeader.tsx`: the nav, with four hard-coded anchors (lines 37–55).
+- `docs/frontend/DESIGN_SYSTEM.md` and `DARK_MODE.md`: the rules any design has to follow.
+- `docs/frontend/`: where the missing design document belongs.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code in my CampusOS clone. It read the issue body, `page.tsx`, `LandingHeader.tsx`, and my `CLAUDE.local.md`, then ran `pnpm dev` and fetched `/` to compare what the page serves with the source.
+- What it produced: the four answers above, the line numbers for the content arrays and nav anchors, and a rendered-page check showing the same sections and headings as the source, with zero open-source or contributor matches.
+- Difficulties: the first fetch returned a different app's page, because an unrelated Next.js server was already on IPv4 port 3000. It took a `lsof` on the port to see that CampusOS had bound only IPv6. A fetch is also not a look: it can't show me spacing, screen widths, or dark mode.
+- What changed: I fetched `http://[::1]:3000/` instead, added that step to my repro steps, and listed screen-width and dark-mode behavior as unverified rather than claiming them.
 
 ---
 
@@ -122,7 +124,7 @@ Claim comment: https://github.com/NITRR-Official/CampusOS/issues/60#issuecomment
 
 **Environment Setup**
 
-macOS (Darwin 27.0.0), git 2.54.0, node v24.11.1. I forked NITRR-Official/CampusOS to trihiennguye-ux/CampusOS and cloned the fork. Branch `dev` is at `4263489` ("fix: add header and hero component and auth states for buttons #86 (#87)", 2026-08-05), which matched upstream `dev` on 2026-10-28, with a clean working tree. #60 is a design request, not a bug, so reproducing it means showing that the gap it describes is still real in today's code. All of my checks are static checks on the source. The challenge I haven't solved yet: `pnpm` isn't installed, so I haven't run `pnpm install` or `pnpm dev` and haven't viewed the rendered page at `/`. Viewing the page, including how it responds to screen width and dark mode, is still to do.
+macOS (Darwin 27.0.0), git 2.54.0, node v24.11.1. I forked NITRR-Official/CampusOS to trihiennguye-ux/CampusOS and cloned the fork. Branch `dev` is at `4263489` ("fix: add header and hero component and auth states for buttons #86 (#87)", 2026-08-05), which matched upstream `dev` on 2026-10-28, with a clean working tree. #60 is a design request, not a bug, so reproducing it means showing that the gap it describes is still real in today's code. My first checks were static checks on the source, because `pnpm` wasn't installed yet. On 2026-11-04, with `pnpm` and the dependencies installed, I ran `pnpm dev` in `frontend/` (Next.js 16.2.2) and fetched the rendered page at `/`. One snag: my first fetch returned a different app's page ("What are we planning?"). Another Next.js server from an unrelated project was already listening on IPv4 port 3000, and CampusOS had bound only IPv6, so I fetched `http://[::1]:3000/` instead. I still haven't looked at the page in a browser, so how it looks at different screen widths and in dark mode is unverified.
 
 **Steps to Reproduce**
 
@@ -132,7 +134,8 @@ From a clean clone at `dev` `4263489`:
 2. Search the page and its two components for the themes the issue asks for: `grep -niE "open.?source|community|contribut|github|calendar|plugin" frontend/app/page.tsx frontend/components/LandingHeader.tsx frontend/components/LandingHeroActions.tsx`
 3. Look for a landing page design doc: `ls docs/frontend` and `grep -rliE "landing" docs/`
 4. Check the hero's stat tiles: `grep -nE "value: '" frontend/app/page.tsx`
-5. Observed result: the page already has a hero, four sections (`#features`, `#modules`, `#workflow`, `#launch`), and a footer, but there's no written design in the repo, and there are no open-source/community or contributor sections.
+5. Render the page and check that what's served matches the source: `cd frontend && pnpm dev`, then `curl -s -g 'http://[::1]:3000/'` and grep the HTML for section ids, `<h1>`/`<h2>` text, the stat values, and `open.?source|contribut|github`.
+6. Observed result: the page already has a hero, four sections (`#features`, `#modules`, `#workflow`, `#launch`), and a footer, but there's no written design in the repo, and there are no open-source/community or contributor sections. The rendered page (HTTP 200) shows the same thing: the four ids, one `<h1>` ("Campus operations, finally in sync."), four `<h2>`s, the four stat values, and zero matches for open-source, contributor, or GitHub text.
 
 **Reproduction Evidence**
 
@@ -151,6 +154,20 @@ From a clean clone at `dev` `4263489`:
   122:                { label: 'Uptime', value: '99.9%' }
   ```
 
+  Step 5, rendered page:
+
+  ```
+  status: 200
+  id="features"  id="modules"  id="workflow"  id="launch"
+  h1: Campus operations, finally in sync.
+  h2: Built for every campus team.
+  h2: Everything your campus runs on.
+  h2: From onboarding to outcomes.
+  h2: Launch your campus OS.
+  12+ 120+ 40+ 99.9%
+  open-source/contributor/github matches: 0
+  ```
+
   Step 3 found only `DARK_MODE.md`, `DESIGN_SYSTEM.md`, and `OVERVIEW.md` in `docs/frontend`. The only "landing" mentions are file-tree and route-table lines in `OVERVIEW.md` and `docs/project/PROJECT_STRUCTURE.md`.
 - **My findings:** The gap #60 describes is partly real today. A landing page exists in code, more complete than "placeholder" (#63's title) suggests, but none of the issue's design deliverables (section hierarchy, design decisions) exist in the repo. Two of its goals have no section at all: open-source/community and contributor onboarding. Two are only partly covered: the Modules section never mentions the plugin architecture, and the calendar showcase is one module card. The hero's stats are hard-coded marketing numbers. Whether the owner still wants a full design or only the missing sections is the question in my claim comment, which is still unanswered.
 
@@ -167,29 +184,48 @@ From a clean clone at `dev` `4263489`:
 
 **Analysis**
 
-[Your analysis of the root cause: what is causing the issue, traced
-to the files and functions involved.]
+The page was built in code before anyone designed it. #63 ("Landing Page Placeholder", merged 2026-05-23) created `frontend/app/page.tsx` and changed `docs/frontend/DESIGN_SYSTEM.md` and `OVERVIEW.md`, but added no landing page design document. #87 (merged 2026-08-05) added `LandingHeader` and `LandingHeroActions`. Because no section list was ever agreed in writing, the page's structure is whatever `LandingPage()` in `page.tsx` happens to render: the `HIGHLIGHTS` array (line 21) feeds `#features` (line 224), `MODULES` (line 45) feeds `#modules` (line 261), `STEPS` (line 68) feeds `#workflow` (line 295), and `#launch` (line 330) and the footer (line 362) are written inline. The nav in `LandingHeader.tsx` (lines 37–55) hard-codes those same four anchors. Each goal in #60 that isn't one of these arrays has no section: open-source/community and contributor onboarding have none at all, plugin architecture is missing from the `MODULES` copy, and the calendar is a single card. The stat tiles (lines 119–122) are inline placeholder numbers with no data source. My repro evidence supports this: `docs/frontend/` has no landing document, and the rendered page has the four sections and zero open-source or contributor text.
 
 **Proposed Solution**
 
-[High-level description of your fix approach, and what you are
-deliberately NOT changing.]
+Write the missing design as one markdown spec, `docs/frontend/LANDING_PAGE.md`, and open it as a docs PR into `dev`. I chose markdown under `docs/frontend/` because the repo's existing design rules already live there as markdown (`DESIGN_SYSTEM.md`, `DARK_MODE.md`), a reviewer can check a text spec line by line in a PR, and #60 asks for design and planning only. The spec starts from the page that exists rather than from a blank page, and covers each acceptance criterion:
+
+- **Section hierarchy:** the order of sections and what each one has to communicate, mapped against the issue's proposed list. It keeps the existing hero, Platform pillars, Modules, Workflow, Launch, and footer, and specifies the missing ones: an open-source/community section, a contributor onboarding section, plugin architecture in Modules, and a calendar showcase. Each one is a low-fidelity wireframe in a text block.
+- **Responsive behavior:** what each section does at the Tailwind breakpoints the page already uses (`sm`, `md`, `lg`), including where the nav, hidden below `lg` today, goes on small screens.
+- **Design-system direction:** which tokens, type scale, and components from `DESIGN_SYSTEM.md` each section uses, plus dark-mode notes per `DARK_MODE.md`.
+- **Implementation-ready decisions:** for each section, its anchor id, the components it uses, where its content lives, and a decision on the hard-coded stat tiles. Also a list of what's left for the separate implementation issue.
+
+What I won't change: no frontend code. `page.tsx`, `LandingHeader.tsx`, `LandingHeroActions.tsx`, and the design-system package stay exactly as they are, because #60 says implementation is handled separately. No edits to `DESIGN_SYSTEM.md` or any other existing doc, no high-fidelity mockups or Figma file, and no animation or interaction design beyond a short list of ideas the spec labels as unrequired.
+
+Open question: my claim comment asked the owner whether they want a full design or only the sections below the hero, and in what format. There's no answer yet. If the owner picks a different format or scope, I'll follow that and record the change below as a deviation.
 
 **Implementation Plan**
 
-1. [Modify file X to do Y]
-2. [Add or change Z]
-3. [Update tests]
+1. Post the section-hierarchy outline on #60 as my plan comment, as my claim comment promised, before writing the full spec.
+2. Branch from `dev` in my fork: `docs/60-landing-page-design`.
+3. Create `docs/frontend/LANDING_PAGE.md` with five top-level sections, one per acceptance criterion: UI/UX direction, Section hierarchy, Responsive behavior, Design-system direction, Implementation-ready decisions. Under Section hierarchy, give each page section (existing and new) a subsection with its goal, content, and text wireframe.
+4. Write the Design-system direction section by citing `DESIGN_SYSTEM.md` sections 1–8 by name, so every color, type, and spacing choice points at an existing rule rather than a new one.
+5. Run `pnpm format` so the new file passes the repo's `format:check` (its glob includes `**/*.md`).
+6. Verify (each result can be observed):
+   - Before, `ls docs/frontend` lists three files; after, it also lists `LANDING_PAGE.md`. Before, `grep -rliE landing docs/` matches only `OVERVIEW.md` and `docs/project/PROJECT_STRUCTURE.md`; after, it also matches the new spec.
+   - `grep -nE "^#{2,3} " docs/frontend/LANDING_PAGE.md` shows a heading for each of the five acceptance criteria and a subsection for each of the eight sections the issue proposes, including open-source/community and contributor onboarding.
+   - `pnpm format:check` exits 0.
+   - `git diff --name-only dev...HEAD` prints only `docs/frontend/LANDING_PAGE.md`, which shows no frontend code changed.
+   - Rendering `/` (`pnpm dev`, then fetch `http://[::1]:3000/`) still shows the same `<h1>` and four `<h2>`s as my repro, which confirms the page is untouched.
+7. Open the PR into `dev` with `Closes #60`, the template's checklists filled in (type: "Documentation update", no screenshots since there's no UI change), and my AI-use disclosure.
 
-[Record deviations here as they happen: what changed mid-build and
-why. A recorded deviation is honest work; silent drift is not.]
+Deviations:
+
+- 2026-11-05: Step 1 done differently. I posted the section-hierarchy outline as its own comment on #60 (issuecomment-6647213727), not as the plan-comment.md draft, because the assignment says not to post that. The outline lists 8 sections with proposed new anchors (`#calendar`, `#open-source`, `#contribute`), asks the owner whether the order and scope work, and says I'll use the markdown spec in `docs/frontend/LANDING_PAGE.md` unless they ask for another format.
+- 2026-11-05: Step 2 branch name. The branch is `feature/60-landing-page-design`, not `docs/60-landing-page-design`, because CONTRIBUTING.md asks for `feature/issue-number-description`. Branched from `dev` at 4263489, which matched upstream `dev`.
+- 2026-11-05: Step 3 has 10 subsections under Section hierarchy, not 8. The issue's "Footer/navigation" is split into Header and navigation (2.0) and Footer (2.9), and the existing Launch CTA (2.8) gets its own subsection.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code, drafting the Analysis from the line numbers and PR history it pulled (`gh pr view 63` and `87`), and checking the plan against my plan-check rubric's required checks before I run plan-check itself (assignment step 6).
+- What it produced: this Solution Approach, with the cause traced to `LandingPage()` and its three content arrays, one committed deliverable (`docs/frontend/LANDING_PAGE.md`), and a test list where each check has an observable result. The same text is in `plan.md` at the top of my CampusOS clone.
+- Difficulties: the owner hasn't answered my format question, so I had to commit to one format without them. My rubric's "A stranger could start" check fails a plan that leaves the choice open. A design-only issue also has no failing test to make pass, so the observable checks are about the file existing and covering the criteria, plus proof that no code changed.
+- What changed: I chose the markdown spec and wrote down why, made "follow the owner's answer and record it as a deviation" an explicit rule, and put the outline post first so the owner sees the hierarchy before the full spec exists.
 
 ---
 
@@ -233,27 +269,30 @@ built, decisions you made when you made them, wrong turns included.]
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when opened]
+**PR Link:** https://github.com/NITRR-Official/CampusOS/pull/135
 
-**PR Description:** [what the PR says; much of the content above
-adapts into it]
+**PR Description:** "docs(frontend): add landing page design spec (#60)", opened 2026-11-05 from `feature/60-landing-page-design` into `dev`, with `Closes #60`. The PR adds one file, `docs/frontend/LANDING_PAGE.md`. The description explains why the spec is needed: the page was built in code (#63, #87) before any design was written down, three of #60's proposed sections were missing from the page, and the stat tiles are hard-coded. It lists what the spec covers, one top-level section per acceptance criterion:
+
+- UI/UX direction
+- section hierarchy, which keeps the existing sections and adds `#calendar`, `#open-source`, and `#contribute`
+- responsive behavior, including a `Sheet` menu below `lg`
+- design-system direction, citing `DESIGN_SYSTEM.md` and `DARK_MODE.md` with no new tokens
+- implementation-ready decisions
+
+It also says what isn't in the PR (frontend code, edits to existing docs, a Figma file) and how the PR differs from my plan (the branch name, and 10 subsections instead of 8). It shows before/after output for `ls docs/frontend`, the landing grep, the heading list, and `git diff --name-only`, plus proof that the rendered `/` didn't change, and a table of format, lint, type-check, build, and test results (all passing). It ends with my AI-use disclosure.
 
 **Maintainer Feedback:**
 
-- [Date]: [feedback received, or "none yet"; silence is a normal
-  state and costs you nothing]
-- [Date]: [how you addressed it]
+- 2026-11-05: none yet. The only comment is Vercel's preview bot, and its preview check passed.
 
-**Status:** [Awaiting review / Iterating / Merged / Closed. The
-status is a fact you record, never a grade: the PR is graded as
-opened.]
+**Status:** Awaiting review
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: the ship-gate (`~/.claude/ship-gate/check_gate.py`), installed as a PreToolUse hook on `gh pr create`. It runs my `ship-manifest.md` checks, then pr-precheck against `plan.md`, the issue, and my test evidence. I ran it by hand with `--branch` first, then let the hook check the real `gh pr create`.
+- What it produced: a log in `gate-log.md`. A BLOCK on the hook test ("no PR text to check"). Then two manual PASSes on `feature/60-landing-page-design` at head `9110cc1`, at 20:48 and 20:51 (I re-ran after editing the PR body). Each pass had all five manifest checks ok and all nine pr-precheck checks passing, for example "Diff stays inside the plan: Only docs/frontend/LANDING_PAGE.md changed". Last, a hook PASS at 20:52 that "honored the manual pass at 20:51", because the head, base, title, body, manifest, plan, evidence, and issue were all unchanged.
+- Difficulties: the repo's `format:check` checks every `.md` file in the working tree, so my untracked local notes would have failed it even though the PR was fine. The first block confused me until I read its reason. And because any edit to the body changes the body fingerprint, each wording fix to the description meant another full manual run before the hook would pass.
+- What changed: I added `--ignore-path .git/info/exclude` to the manifest's format command and recorded why. I re-ran the gate after my last body edit so the hook's pass matched the text I actually submitted. The next change I'd make is adding CI's `pnpm build` job to the manifest, since I ran it only by hand.
 
 ---
 
