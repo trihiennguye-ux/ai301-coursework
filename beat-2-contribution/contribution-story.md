@@ -66,10 +66,9 @@ I installed the voice guard as a PreToolUse hook that checks every `gh issue com
 
 I wrote `ship-manifest.md` from `.github/workflows/ci.yml` and CONTRIBUTING.md: install, format check, lint, type-check, and test. The gate passed my branch `feature/60-landing-page-design` twice by hand, with all five checks ok and all nine pr-precheck checks passing, and the hook then let `gh pr create` through on the second pass because nothing had changed since. Two things stopped or confused me. The hook test blocked with "no PR text to check", which is expected when there's no `--title`/`--body-file`, but I only knew that because the reason says so. And the repo's own `format:check` would have failed on my untracked local notes (`CLAUDE.local.md`, `plan.md`), not on anything in the PR. So I added `--ignore-path .git/info/exclude` to the format command and wrote down why in its Source column. Looking back, I left CI's Build job out of the manifest, so I ran `pnpm build` by hand for the description, and I'd add it as a sixth check.
 
-**Unit 8: [one line on the tool work]**
+**Unit 8: installed the PR monitor, wrote my playbook from CampusOS's review history, and ran it on PR #135**
 
-[2-4 sentences: the PR-monitor and your playbook. What it read, what it
-drafted, what you did with the draft.]
+The monitor read PR #135's thread, checks, and merge state, and drafted a wait note: "No reply to send. The only thread item is Vercel's preview bot." It cited my playbook rule "First review: nudge after 10 quiet days" and set the next check for 2026-11-15. I didn't send anything, because there was nothing to answer. If the PR is still quiet that day, I'll write the one nudge myself, tagging only TheFakeCreator. What confused me was the state label. Every run, including my first `--state` runs before the playbook was filled, said "FEEDBACK-IN: review feedback is in", but the only "feedback" was Vercel's deploy comment, and the review decision was "none yet". The merge state also showed UNSTABLE with only 2 checks reported, which looks like CI waiting for a maintainer's approval. So I based my staleness rule on five merged outside PRs (#87, #47, #42, #18, #17) and CONTRIBUTING.md's 3–7 days, and wrote "The CI workflow waiting for approval doesn't count as activity" into the playbook. The fix I'd make next is having the monitor skip bot comments before it labels a PR FEEDBACK-IN.
 
 ---
 
@@ -283,7 +282,7 @@ It also says what isn't in the PR (frontend code, edits to existing docs, a Figm
 
 **Maintainer Feedback:**
 
-- 2026-11-05: none yet. The only comment is Vercel's preview bot, and its preview check passed.
+- 2026-11-05: none yet. The only comment is Vercel's preview bot (its preview check passed), with no reviews and no review decision. My PR monitor's run the same day agreed there's nothing to reply to. Next check is 2026-11-15, the 10-quiet-day nudge point in my playbook.
 
 **Status:** Awaiting review
 
