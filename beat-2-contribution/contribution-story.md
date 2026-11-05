@@ -112,7 +112,7 @@ The issue's acceptance criteria: a finalized UI/UX direction, a defined section 
 
 **Toolkit**
 
-- Tool: Claude Code in my CampusOS clone. It read the issue body, `page.tsx`, `LandingHeader.tsx`, and my `CLAUDE.local.md`, then ran `pnpm dev` and fetched `/` to compare what the page serves with the source.
+- Tool: my AI coding assistant, working in my CampusOS clone. It read the issue body, `page.tsx`, `LandingHeader.tsx`, and my `CLAUDE.local.md`, then ran `pnpm dev` and fetched `/` to compare what the page serves with the source.
 - What it produced: the four answers above, the line numbers for the content arrays and nav anchors, and a rendered-page check showing the same sections and headings as the source, with zero open-source or contributor matches.
 - Difficulties: the first fetch returned a different app's page, because an unrelated Next.js server was already on IPv4 port 3000. It took a `lsof` on the port to see that CampusOS had bound only IPv6. A fetch is also not a look: it can't show me spacing, screen widths, or dark mode.
 - What changed: I fetched `http://[::1]:3000/` instead, added that step to my repro steps, and listed screen-width and dark-mode behavior as unverified rather than claiming them.
@@ -221,7 +221,7 @@ Deviations:
 
 **Toolkit**
 
-- Tool: Claude Code, drafting the Analysis from the line numbers and PR history it pulled (`gh pr view 63` and `87`), and checking the plan against my plan-check rubric's required checks before I run plan-check itself (assignment step 6).
+- Tool: my AI coding assistant, drafting the Analysis from the line numbers and PR history it pulled (`gh pr view 63` and `87`), and checking the plan against my plan-check rubric's required checks before I run plan-check itself (assignment step 6).
 - What it produced: this Solution Approach, with the cause traced to `LandingPage()` and its three content arrays, one committed deliverable (`docs/frontend/LANDING_PAGE.md`), and a test list where each check has an observable result. The same text is in `plan.md` at the top of my CampusOS clone.
 - Difficulties: the owner hasn't answered my format question, so I had to commit to one format without them. My rubric's "A stranger could start" check fails a plan that leaves the choice open. A design-only issue also has no failing test to make pass, so the observable checks are about the file existing and covering the criteria, plus proof that no code changed.
 - What changed: I chose the markdown spec and wrote down why, made "follow the owner's answer and record it as a deviation" an explicit rule, and put the outline post first so the owner sees the hierarchy before the full spec exists.
@@ -244,7 +244,7 @@ The repo's own checks, run on the branch through my ship manifest: format check 
 
 **Toolkit**
 
-- Tool: Claude Code in my clone. It ran the before commands on `dev` and the after commands on the branch, ran the four repo checks plus `pnpm build`, and wrote the results into `test_evidence.md`. The ship-gate re-ran the manifest checks and pr-precheck read that file as evidence.
+- Tool: my AI coding assistant, working in my clone. It ran the before commands on `dev` and the after commands on the branch, ran the four repo checks plus `pnpm build`, and wrote the results into `test_evidence.md`. The ship-gate re-ran the manifest checks and pr-precheck read that file as evidence.
 - What it produced: `test_evidence.md` with the before/after output above and a results table. pr-precheck's "Evidence shows the fix" check passed on it.
 - Difficulties: a design spec has nothing to execute, so my first idea of a "test" was only "the file exists". The local fetch hit the IPv4/IPv6 port clash again. And `pnpm lint` printed a warning I had to trace before I could say it wasn't mine.
 - What changed: I added the heading grep, so coverage of every acceptance criterion and proposed section can be checked, and the rendered-page comparison, so "no code changed" is shown rather than claimed. I also recorded the lint warning's file as pre-existing instead of leaving it out.
@@ -269,7 +269,7 @@ Posted my reproduction on #60 (issuecomment-6646978356), then the section-hierar
 
 **Toolkit**
 
-- Tool: Claude Code. It read `page.tsx`, `LandingHeader.tsx`, `DESIGN_SYSTEM.md`, and `DARK_MODE.md`, and drafted the outline comment and the spec. I read each section against the code and changed what didn't match. The voice guard checked the outline comment before it posted.
+- Tool: my AI coding assistant. It read `page.tsx`, `LandingHeader.tsx`, `DESIGN_SYSTEM.md`, and `DARK_MODE.md`, and drafted the outline comment and the spec. I read each section against the code and changed what didn't match. The voice guard checked the outline comment before it posted.
 - What it produced: the outline comment on #60, the 402-line spec in commit `9110cc1`, and the deviation notes in `plan.md`.
 - Difficulties: the owner never answered either question, so every scope call (keep the hero, add three sections, the stat-tile decision) was mine to make and to justify in writing. The calendar copy depends on what the `calendar`, `event`, and `scheduling` plugins actually do, and I didn't verify that.
 - What changed: I marked the new sections' copy "for example" and listed checking the calendar points against those plugins under "Left for the implementation issue", rather than presenting them as settled.
