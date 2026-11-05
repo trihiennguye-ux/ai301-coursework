@@ -68,7 +68,7 @@ I wrote `ship-manifest.md` from `.github/workflows/ci.yml` and CONTRIBUTING.md: 
 
 **Unit 8: installed the PR monitor, wrote my playbook from CampusOS's review history, and ran it on PR #135**
 
-The monitor read PR #135's thread, checks, and merge state, and drafted a wait note: "No reply to send. The only thread item is Vercel's preview bot." It cited my playbook rule "First review: nudge after 10 quiet days" and set the next check for 2026-11-15. I didn't send anything, because there was nothing to answer. If the PR is still quiet that day, I'll write the one nudge myself, tagging only TheFakeCreator. What confused me was the state label. Every run, including my first `--state` runs before the playbook was filled, said "FEEDBACK-IN: review feedback is in", but the only "feedback" was Vercel's deploy comment, and the review decision was "none yet". The merge state also showed UNSTABLE with only 2 checks reported, which looks like CI waiting for a maintainer's approval. So I based my staleness rule on five merged outside PRs (#87, #47, #42, #18, #17) and CONTRIBUTING.md's 3–7 days, and wrote "The CI workflow waiting for approval doesn't count as activity" into the playbook. The fix I'd make next is having the monitor skip bot comments before it labels a PR FEEDBACK-IN.
+The monitor read PR #135's thread, checks, and merge state, and drafted a wait note: "No reply to send. The only thread item is Vercel's preview bot." It cited my playbook rule "First review: nudge after 10 quiet days" and set the next check for 2026-11-15. I didn't send anything, because there was nothing to answer. If the PR is still quiet that day, I'll write the one nudge myself, tagging only TheFakeCreator. (The nudge wasn't needed. TheFakeCreator commented and merged the PR the same day.) What confused me was the state label. Every run, including my first `--state` runs before the playbook was filled, said "FEEDBACK-IN: review feedback is in", but the only "feedback" was Vercel's deploy comment, and the review decision was "none yet". The merge state also showed UNSTABLE with only 2 checks reported, which looks like CI waiting for a maintainer's approval. So I based my staleness rule on five merged outside PRs (#87, #47, #42, #18, #17) and CONTRIBUTING.md's 3–7 days, and wrote "The CI workflow waiting for approval doesn't count as activity" into the playbook. The fix I'd make next is having the monitor skip bot comments before it labels a PR FEEDBACK-IN.
 
 ---
 
@@ -198,6 +198,8 @@ What I won't change: no frontend code. `page.tsx`, `LandingHeader.tsx`, `Landing
 
 Open question: my claim comment asked the owner whether they want a full design or only the sections below the hero, and in what format. There's no answer yet. If the owner picks a different format or scope, I'll follow that and record the change below as a deviation.
 
+Update (2026-11-05): the owner answered on PR #135 instead of on #60. They confirmed the markdown spec format and the section order, so the plan needed no deviation for scope or format.
+
 **Implementation Plan**
 
 1. Post the section-hierarchy outline on #60 as my plan comment, as my claim comment promised, before writing the full spec.
@@ -292,9 +294,10 @@ It also says what isn't in the PR (frontend code, edits to existing docs, a Figm
 
 **Maintainer Feedback:**
 
-- 2026-11-05: none yet. The only comment is Vercel's preview bot (its preview check passed), with no reviews and no review decision. My PR monitor's run the same day agreed there's nothing to reply to. Next check is 2026-11-15, the 10-quiet-day nudge point in my playbook.
+- 2026-11-05 (early): none yet. The only comment is Vercel's preview bot (its preview check passed), with no reviews and no review decision. My PR monitor's run the same day agreed there's nothing to reply to. Next check is 2026-11-15, the 10-quiet-day nudge point in my playbook.
+- 2026-11-05 08:18 UTC: TheFakeCreator commented on the PR and answered the questions I'd asked on #60. Format: the markdown spec was "100% the right call" and they don't need a Figma file. Section order: the 10-section breakdown, including the split Header/Footer and the separate `#launch` CTA, "flows very logically". Stat tiles: "Huge +1" on replacing the hard-coded numbers with facts from the repo. They said the frontend build (components, the mobile `Sheet` nav, the plugin strip) will go in a follow-up implementation issue that references the spec. No change requests, so nothing to reply to or revise.
 
-**Status:** Awaiting review
+**Status:** Merged. TheFakeCreator merged PR #135 into `dev` on 2026-11-05 at 08:19 UTC (merge commit `91b093a`), and #60 closed automatically through `Closes #60`.
 
 **Toolkit**
 
